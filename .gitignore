@@ -1,0 +1,4 @@
+.vscode
+.editorconfig
+lex.yy.c
+/out
