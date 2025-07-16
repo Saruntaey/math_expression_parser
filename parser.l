@@ -151,11 +151,11 @@ static void process_white_space(int n) {
     return MATH_SQR;
 }
 
-"mmax" {
+"max" {
     return MATH_MAX;
 }
 
-"mmin" {
+"min" {
     return MATH_MIN;
 }
 

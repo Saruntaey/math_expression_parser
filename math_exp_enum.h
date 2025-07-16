@@ -4,6 +4,8 @@
 typedef enum math_exp_type {
 	MATH_BRACKET_START,
 	MATH_BRACKET_END,
+
+	MATH_OPERATOR_START,
 	MATH_LESS_THAN_EQ,
 	MATH_LESS_THAN,
 	MATH_GREATER_THAN,
@@ -16,6 +18,8 @@ typedef enum math_exp_type {
 	MATH_PLUS,
 	MATH_MINUS,
 	MATH_DIV,
+	MATH_OPERATOR_END,
+
 	MATH_COMMA,
 	MATH_SQRT,
 	MATH_SQR,
@@ -24,20 +28,19 @@ typedef enum math_exp_type {
 	MATH_SIN,
 	MATH_COS,
 	MATH_POW,
+
+	MATH_OPERAND_START,
 	MATH_INTEGER_VALUE,
 	MATH_DOUBLE_VALUE,
 	MATH_IDENTIFIER,
 	MATH_IDENTIFIER_IDENTIFIER,
+	MATH_OPERAND_END,
+
 	MATH_STRING_VALUE,
 	MATH_SPACE,
 
-	MATH_EXP_MAX,
-} math_exp_type;
-
-typedef enum extra_enum {
-	PARSER_EOL = (int) MATH_EXP_MAX + 1,
+	PARSER_EOL,
 	PARSER_QUIT,
-} extra_enum;
-
+} math_exp_type;
 
 #endif

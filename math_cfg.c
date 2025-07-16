@@ -24,8 +24,15 @@ static parse_status E();
 static parse_status F();
 static parse_status T();
 static parse_status Q();
+static parse_status G();
+static parse_status P();
 static parse_status INEQ();
 
+// E -> F + E | F - E | F
+// F -> T * F | T / F | T
+// T -> (E) | <var> | <int> | <double> | G(E) | P(E, E)
+// G -> sqr | sqrt | sin | cos
+// P -> min | max | pow
 void parse_math() {
 	if (E() == PARSE_SUCCESS) {
 		printf("vaild\n");
@@ -121,7 +128,7 @@ parse_status F() {
 }
 
 
-// T -> (E) | <var> | <int> | <double>
+// T -> (E) | <var> | <int> | <double> | G(E) | P(E, E)
 parse_status T() {
 	PARSE_INIT;
 	parse_status s;
@@ -160,10 +167,71 @@ parse_status T() {
 		if (d.token_code != MATH_DOUBLE_VALUE) break;
 		return PARSE_SUCCESS;
 	} while(0);
+	RESTORE_CHECK_POINT;
+
+	// T -> G(E)
+	do {
+		s = G();
+		if (s == PARSE_ERROR) break;
+		d = cyylex();
+		if (d.token_code != MATH_BRACKET_START) break;
+		s = E();
+		if (s == PARSE_ERROR) break;
+		d = cyylex();
+		if (d.token_code != MATH_BRACKET_END) break;
+		return PARSE_SUCCESS;
+	} while(0);
+	RESTORE_CHECK_POINT;
+
+	// T -> P(E, E) 
+	do {
+		s = P();
+		if (s == PARSE_ERROR) break;
+		d = cyylex();
+		if (d.token_code != MATH_BRACKET_START) break;
+		s = E();
+		if (s == PARSE_ERROR) break;
+		d = cyylex();
+		if (d.token_code != MATH_COMMA) break;
+		s = E();
+		if (s == PARSE_ERROR) break;
+		d = cyylex();
+		if (d.token_code != MATH_BRACKET_END) break;
+		return PARSE_SUCCESS;
+	} while(0);
 
 	RETURN_PARSE_ERROR;
 }
+// G -> sqr | sqrt | sin | cos
+parse_status G() {
+	PARSE_INIT;
 
+	d = cyylex();
+	switch (d.token_code) {
+	case MATH_SQRT:
+	case MATH_SQR:
+	case MATH_SIN:
+	case MATH_COS:
+		return PARSE_SUCCESS;
+	default:
+		RETURN_PARSE_ERROR;
+	}
+}
+
+// P -> min | max | pow
+parse_status P() {
+	PARSE_INIT;
+
+	d = cyylex();
+	switch (d.token_code) {
+	case MATH_MAX:
+	case MATH_MIN:
+	case MATH_POW:
+		return PARSE_SUCCESS;
+	default:
+		RETURN_PARSE_ERROR;
+	}
+}
 
 // Q -> E INEQ E
 parse_status Q() {
