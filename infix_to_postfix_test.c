@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include "parser_export.h"
+#include "math_expr_tree.h"
 
 extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 
-#define DO_TEST(infix_array) { \
+#define DO_TEST(infix_array, test_tree) { \
 	int n; \
 	int len; \
 	lex_data **postfix; \
 	n = sizeof(infix_array)/sizeof(infix_array[0]); \
+	printf("---\n"); \
 	for (int i = 0; i < n; i++) { \
 		printf("%s", infix_array[i].text); \
 	} \
@@ -17,6 +19,11 @@ extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 		printf("%s ", postfix[i]->text); \
 	} \
 	printf("\n"); \
+	if (test_tree) { \
+		MathExprTree *tree = new MathExprTree(postfix, len); \
+		tree->inorderPrint(); \
+		printf("\n"); \
+	} \
 }
 
 int main(void) {
@@ -86,8 +93,27 @@ int main(void) {
         {MATH_IDENTIFIER, 1, "e" },
     };    
 
-	DO_TEST(infix_array1);
-	DO_TEST(infix_array2);
-	DO_TEST(infix_array3);
-	DO_TEST(infix_array4);
+	// 10 + 12 * 42.3 / (2 - 0.5)
+    lex_data infix_array5[] = {
+        {MATH_INTEGER_VALUE, 2, "10" },
+        {MATH_SPACE, 1, " " },
+        {MATH_PLUS, 1, "+" },
+        {MATH_SPACE, 1, " " },
+        {MATH_INTEGER_VALUE, 2, "12" },
+        {MATH_SPACE, 1, " " },
+        {MATH_MUL, 1, "*" },
+        {MATH_SPACE, 1, " " },
+        {MATH_DOUBLE_VALUE, 4, "42.3" },
+        {MATH_DIV, 1, "/" },
+        {MATH_BRACKET_START, 1, "(" },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_MINUS, 1, "-" },
+        {MATH_DOUBLE_VALUE, 3, "0.5" },
+        {MATH_BRACKET_END, 1, ")" },
+    };
+	DO_TEST(infix_array1, 0);
+	DO_TEST(infix_array2, 0);
+	DO_TEST(infix_array3, 0);
+	DO_TEST(infix_array4, 0);
+	DO_TEST(infix_array5, 1);
 }

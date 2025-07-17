@@ -39,6 +39,8 @@ typedef enum math_exp_type {
 	MATH_STRING_VALUE,
 	MATH_SPACE,
 
+	MATH_INVALID,
+
 	PARSER_EOL,
 	PARSER_QUIT,
 } math_exp_type;
