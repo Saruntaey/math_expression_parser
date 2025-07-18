@@ -37,9 +37,7 @@ DType *DTypeInt::eval() {
 }
 
 DType *DTypeInt::clone() {
-	DTypeInt *c = new DTypeInt();
-	c->val = this->val;
-	return c;
+	return new DTypeInt(this->val);
 }
 
 DTypeDouble::DTypeDouble(double v) {
@@ -64,7 +62,30 @@ DType *DTypeDouble::eval() {
 }
 
 DType *DTypeDouble::clone() {
-	DTypeDouble *c = new DTypeDouble();
-	c->val = this->val;
-	return c;
+	return new DTypeDouble(this->val);
+}
+
+DTypeBool::DTypeBool(bool v) {
+	this->id = MATH_BOOL;
+	this->val = v;
+}
+
+void DTypeBool::setValue(void *v) {
+	// empty
+}
+
+void DTypeBool::setValue(DType *v) {
+	this->val = dynamic_cast<DTypeBool *>(v)->val;
+}
+
+math_exp_type DTypeBool::resultType() {
+	return MATH_BOOL;
+}
+
+DType *DTypeBool::eval() {
+	return clone();
+}
+
+DType *DTypeBool::clone() {
+	return new DTypeBool(this->val);
 }

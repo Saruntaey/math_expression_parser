@@ -2,6 +2,7 @@
 #include "parser_export.h"
 #include "math_expr_tree.h"
 #include "dtype.h"
+#include <assert.h>
 
 extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 
@@ -32,6 +33,8 @@ extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 			switch (res->id) { \
 			case MATH_INTEGER_VALUE: printf("%d", ((DTypeInt *) res)->val); break; \
 			case MATH_DOUBLE_VALUE: printf("%f", ((DTypeDouble *) res)->val); break; \
+			case MATH_BOOL: printf("%s", ((DTypeBool *) res)->val ? "True" : "False"); break; \
+			default: assert(0); \
 			} \
 			printf("\n"); \
 			delete res; \
@@ -176,6 +179,21 @@ int main(void) {
         {MATH_INTEGER_VALUE, 1, "3" },
         {MATH_BRACKET_END, 1, ")" },
     };    
+
+	// 1 + 3 = pow(2,2)
+    lex_data infix_array10[] = {
+        {MATH_INTEGER_VALUE, 1, "1" },
+        {MATH_PLUS, 1, "+" },
+        {MATH_INTEGER_VALUE, 1, "3" },
+		{MATH_EQ, 1, "="},
+        {MATH_POW, 3, "pow" },
+        {MATH_BRACKET_START, 1, "(" },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_COMMA, 1, "," },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_BRACKET_END, 1, ")" },
+    };
+
 	DO_TEST(infix_array1, 0);
 	DO_TEST(infix_array2, 0);
 	DO_TEST(infix_array3, 0);
@@ -185,4 +203,5 @@ int main(void) {
 	DO_TEST(infix_array7, 1);
 	DO_TEST(infix_array8, 1);
 	DO_TEST(infix_array9, 1);
+	DO_TEST(infix_array10, 1);
 }

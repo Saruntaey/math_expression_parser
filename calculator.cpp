@@ -44,6 +44,7 @@ int main(void) {
 			switch (res->id) {
 			case MATH_INTEGER_VALUE: printf("%d", ((DTypeInt *) res)->val); break; 
 			case MATH_DOUBLE_VALUE: printf("%f", ((DTypeDouble *) res)->val); break; 
+			case MATH_BOOL: printf("%s", ((DTypeBool *) res)->val ? "True" : "False"); break;
 			default: assert(0);
 			}
 			printf("\n");

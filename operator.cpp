@@ -22,6 +22,12 @@ Operator *Operator::factory(math_exp_type id) {
 	case MATH_MAX: return new OperatorMax();
 	case MATH_MIN: return new OperatorMin();
 	case MATH_POW: return new OperatorPow();
+	case MATH_LESS_THAN_EQ: return new OperatorLessThanEq();
+	case MATH_LESS_THAN: return new OperatorLessThan();
+	case MATH_GREATER_THAN: return new OperatorGreaterThan();
+    case MATH_GREATER_THAN_EQ: return new OperatorGreaterThanEq();
+	case MATH_EQ: return new OperatorEqual();
+	case MATH_NOT_EQ: return new OperatorNotEqual();
 	default: assert(0);
 	}
 }
@@ -633,6 +639,505 @@ DType *OperatorMax::eval() {
 						double l = ((DTypeDouble *) left)->val;
 						double r = ((DTypeDouble *) right)->val;
 						res = new DTypeDouble(l > r ? l : r);
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorLessThanEq::OperatorLessThanEq() {
+	this->id = MATH_LESS_THAN_EQ;
+	this->symbol = "<=";
+	this->is_unary = false;
+};
+OperatorLessThanEq::~OperatorLessThanEq() {};
+
+math_exp_type OperatorLessThanEq::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE):
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE):
+		return MATH_BOOL;
+	default: 
+		return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorLessThanEq::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorLessThanEq::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l <= r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l <= r);
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l <= r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l <= r);
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+
+OperatorLessThan::OperatorLessThan() {
+	this->id = MATH_LESS_THAN;
+	this->symbol = "<";
+	this->is_unary = false;
+};
+OperatorLessThan::~OperatorLessThan() {};
+
+math_exp_type OperatorLessThan::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE):
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE):
+		return MATH_BOOL;
+	default: 
+		return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorLessThan::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorLessThan::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l < r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l < r);
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l < r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l < r);
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorGreaterThanEq::OperatorGreaterThanEq() {
+	this->id = MATH_GREATER_THAN_EQ;
+	this->symbol = ">=";
+	this->is_unary = false;
+};
+OperatorGreaterThanEq::~OperatorGreaterThanEq() {};
+
+math_exp_type OperatorGreaterThanEq::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE):
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE):
+		return MATH_BOOL;
+	default: 
+		return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorGreaterThanEq::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorGreaterThanEq::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l >= r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l >= r);
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l >= r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l >= r);
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorGreaterThan::OperatorGreaterThan() {
+	this->id = MATH_GREATER_THAN;
+	this->symbol = ">";
+	this->is_unary = false;
+};
+OperatorGreaterThan::~OperatorGreaterThan() {};
+
+math_exp_type OperatorGreaterThan::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE):
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE):
+		return MATH_BOOL;
+	default: 
+		return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorGreaterThan::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorGreaterThan::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l > r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l > r);
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l > r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l > r);
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorEqual::OperatorEqual() {
+	this->id = MATH_EQ;
+	this->symbol = "=";
+	this->is_unary = false;
+};
+OperatorEqual::~OperatorEqual() {};
+
+math_exp_type OperatorEqual::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE):
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE):
+		return MATH_BOOL;
+	default: 
+		return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorEqual::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorEqual::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l == r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l == r);
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l == r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l == r);
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorNotEqual::OperatorNotEqual() {
+	this->id = MATH_EQ;
+	this->symbol = "=";
+	this->is_unary = false;
+};
+OperatorNotEqual::~OperatorNotEqual() {};
+
+math_exp_type OperatorNotEqual::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE):
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE):
+		return MATH_BOOL;
+	default: 
+		return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorNotEqual::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorNotEqual::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l != r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l != r);
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeBool(l != r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeBool(l != r);
 						break;
 					}
 			}

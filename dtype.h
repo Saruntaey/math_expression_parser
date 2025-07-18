@@ -39,4 +39,14 @@ public:
 	virtual DType *clone() override;
 };
 
+class DTypeBool: public DType {
+public:
+	bool val;
+	DTypeBool(bool v=false);
+	virtual void setValue(void *v) override;
+	virtual void setValue(DType *v) override;
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
+	virtual DType *clone() override;
+};
 #endif
