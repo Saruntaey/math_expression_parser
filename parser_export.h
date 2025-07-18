@@ -45,6 +45,11 @@ void restore(int _chkp);
 	restore(_chkp); \
 }
 
+static inline constexpr int comb(math_exp_type a, math_exp_type b) {
+	if (a > b) return comb(b, a);
+	return (int) a * (int) MATH_EXP_TYPE_MAX + (int) b;
+}
+
 static inline bool is_operator(math_exp_type token_code) {
 	return MATH_OPERATOR_START < token_code && token_code < MATH_OPERATOR_END;
 }

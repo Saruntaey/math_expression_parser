@@ -36,6 +36,7 @@ typedef enum math_exp_type {
 	MATH_IDENTIFIER_IDENTIFIER,
 	MATH_OPERAND_END,
 
+	MATH_WILDCARD_VALUE,
 	MATH_STRING_VALUE,
 	MATH_SPACE,
 
@@ -43,6 +44,8 @@ typedef enum math_exp_type {
 
 	PARSER_EOL,
 	PARSER_QUIT,
+
+	MATH_EXP_TYPE_MAX,
 } math_exp_type;
 
 #endif

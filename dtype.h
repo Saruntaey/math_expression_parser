@@ -11,6 +11,7 @@ public:
 	math_exp_type id;
 	virtual void setValue(void *v) = 0;
 	virtual void setValue(DType *v) = 0;
+	virtual math_exp_type resultType() = 0;
 	static DType *factory(math_exp_type id);
 };
 
@@ -20,6 +21,7 @@ public:
 	DTypeInt(int v=0);
 	virtual void setValue(void *v) override;
 	virtual void setValue(DType *v) override;
+	virtual math_exp_type resultType() override;
 };
 
 class DTypeDouble: public DType {
@@ -28,6 +30,7 @@ public:
 	DTypeDouble(double v=0.0);
 	virtual void setValue(void *v) override;
 	virtual void setValue(DType *v) override;
+	virtual math_exp_type resultType() override;
 };
 
 #endif

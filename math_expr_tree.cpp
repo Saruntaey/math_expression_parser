@@ -56,6 +56,10 @@ void MathExprTree::inorderPrint() {
 	_inorderPrint(this->root);
 }
 
+bool MathExprTree::valid() {
+	return this->root && this->root->resultType() != MATH_INVALID;
+}
+
 static void _inorderPrint(MathExprNode *node) {
 	if (!node) return;
 	_inorderPrint(node->left);

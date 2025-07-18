@@ -10,6 +10,7 @@ public:
 	MathExprNode *parent;
 	MathExprNode *left;
 	MathExprNode *right;
+	virtual math_exp_type resultType() = 0;
 };
 
 class MathExprTree {
@@ -18,6 +19,7 @@ public:
 	MathExprTree(lex_data **postfix, int size);
 	virtual ~MathExprTree();
 	void inorderPrint();
+	bool valid();
 };
 
 #endif

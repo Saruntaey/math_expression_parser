@@ -28,6 +28,10 @@ void DTypeInt::setValue(DType *v) {
 	this->val = dynamic_cast<DTypeInt *>(v)->val;
 }
 
+math_exp_type DTypeInt::resultType() {
+	return MATH_INTEGER_VALUE;
+}
+
 DTypeDouble::DTypeDouble(double v) {
 	this->id = MATH_DOUBLE_VALUE;
 	this->val = v;
@@ -39,4 +43,8 @@ void DTypeDouble::setValue(void *v) {
 
 void DTypeDouble::setValue(DType *v) {
 	this->val = dynamic_cast<DTypeDouble *>(v)->val;
+}
+
+math_exp_type DTypeDouble::resultType() {
+	return MATH_DOUBLE_VALUE;
 }

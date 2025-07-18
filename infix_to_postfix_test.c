@@ -23,6 +23,7 @@ extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 		MathExprTree *tree = new MathExprTree(postfix, len); \
 		tree->inorderPrint(); \
 		printf("\n"); \
+		printf("tree %s\n", tree->valid() ? "valid" : "in-valid"); \
 	} \
 }
 
