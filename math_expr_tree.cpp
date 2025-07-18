@@ -60,6 +60,12 @@ bool MathExprTree::valid() {
 	return this->root && this->root->resultType() != MATH_INVALID;
 }
 
+
+DType *MathExprTree::eval() {
+	if (!this->root) return nullptr;
+	return this->root->eval();
+}
+
 static void _inorderPrint(MathExprNode *node) {
 	if (!node) return;
 	_inorderPrint(node->left);

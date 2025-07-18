@@ -32,6 +32,16 @@ math_exp_type DTypeInt::resultType() {
 	return MATH_INTEGER_VALUE;
 }
 
+DType *DTypeInt::eval() {
+	return clone();
+}
+
+DType *DTypeInt::clone() {
+	DTypeInt *c = new DTypeInt();
+	c->val = this->val;
+	return c;
+}
+
 DTypeDouble::DTypeDouble(double v) {
 	this->id = MATH_DOUBLE_VALUE;
 	this->val = v;
@@ -47,4 +57,14 @@ void DTypeDouble::setValue(DType *v) {
 
 math_exp_type DTypeDouble::resultType() {
 	return MATH_DOUBLE_VALUE;
+}
+
+DType *DTypeDouble::eval() {
+	return clone();
+}
+
+DType *DTypeDouble::clone() {
+	DTypeDouble *c = new DTypeDouble();
+	c->val = this->val;
+	return c;
 }

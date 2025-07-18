@@ -12,6 +12,8 @@ public:
 	virtual void setValue(void *v) = 0;
 	virtual void setValue(DType *v) = 0;
 	virtual math_exp_type resultType() = 0;
+	virtual DType *eval() = 0;
+	virtual DType *clone() = 0;
 	static DType *factory(math_exp_type id);
 };
 
@@ -22,6 +24,8 @@ public:
 	virtual void setValue(void *v) override;
 	virtual void setValue(DType *v) override;
 	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
+	virtual DType *clone() override;
 };
 
 class DTypeDouble: public DType {
@@ -31,6 +35,8 @@ public:
 	virtual void setValue(void *v) override;
 	virtual void setValue(DType *v) override;
 	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
+	virtual DType *clone() override;
 };
 
 #endif

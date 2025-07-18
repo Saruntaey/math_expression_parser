@@ -2,6 +2,8 @@
 #define _MATH_EXPR_TREE_
 #include "parser_export.h"
 
+class DType;
+
 class MathExprNode {
 protected:
 	MathExprNode();
@@ -11,6 +13,7 @@ public:
 	MathExprNode *left;
 	MathExprNode *right;
 	virtual math_exp_type resultType() = 0;
+	virtual DType *eval() = 0;
 };
 
 class MathExprTree {
@@ -20,6 +23,7 @@ public:
 	virtual ~MathExprTree();
 	void inorderPrint();
 	bool valid();
+	DType *eval();
 };
 
 #endif

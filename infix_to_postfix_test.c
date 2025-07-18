@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "parser_export.h"
 #include "math_expr_tree.h"
+#include "dtype.h"
 
 extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 
@@ -23,7 +24,17 @@ extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 		MathExprTree *tree = new MathExprTree(postfix, len); \
 		tree->inorderPrint(); \
 		printf("\n"); \
-		printf("tree %s\n", tree->valid() ? "valid" : "in-valid"); \
+		bool ok = tree->valid(); \
+		printf("tree %s\n", ok ? "valid" : "in-valid"); \
+		if (ok) { \
+			printf("res: "); \
+			DType *res = tree->eval(); \
+			switch (res->id) { \
+			case MATH_INTEGER_VALUE: printf("%d", ((DTypeInt *) res)->val); break; \
+			case MATH_DOUBLE_VALUE: printf("%f", ((DTypeDouble *) res)->val); break; \
+			} \
+			printf("\n"); \
+		} \
 	} \
 }
 
@@ -112,9 +123,29 @@ int main(void) {
         {MATH_DOUBLE_VALUE, 3, "0.5" },
         {MATH_BRACKET_END, 1, ")" },
     };
+
+	// 1 + 2 * 3 
+    lex_data infix_array6[] = {
+        {MATH_INTEGER_VALUE, 1, "1" },
+        {MATH_PLUS, 1, "+" },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_MUL, 1, "*" },
+        {MATH_INTEGER_VALUE, 1, "3" },
+    };
+
+	// 1 + 2 * 3.0 
+    lex_data infix_array7[] = {
+        {MATH_INTEGER_VALUE, 1, "1" },
+        {MATH_PLUS, 1, "+" },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_MUL, 1, "*" },
+        {MATH_DOUBLE_VALUE, 3, "3.0" },
+    };
 	DO_TEST(infix_array1, 0);
 	DO_TEST(infix_array2, 0);
 	DO_TEST(infix_array3, 0);
 	DO_TEST(infix_array4, 0);
 	DO_TEST(infix_array5, 1);
+	DO_TEST(infix_array6, 1);
+	DO_TEST(infix_array7, 1);
 }

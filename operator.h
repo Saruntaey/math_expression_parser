@@ -15,6 +15,7 @@ public:
 	bool is_unary;
 	static Operator *factory(math_exp_type id);
 	virtual math_exp_type resultType() = 0;
+	virtual DType *eval() = 0;
 };
 
 class OperatorPlus: public Operator {
@@ -23,7 +24,8 @@ private:
 public:
 	OperatorPlus();
 	~OperatorPlus();
-	math_exp_type resultType() override;
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
 };
 
 class OperatorMinus: public Operator {
@@ -32,7 +34,8 @@ private:
 public:
 	OperatorMinus();
 	~OperatorMinus();
-	math_exp_type resultType() override;
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
 };
 
 class OperatorMul: public Operator {
@@ -41,7 +44,8 @@ private:
 public:
 	OperatorMul();
 	~OperatorMul();
-	math_exp_type resultType() override;
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
 };
 
 class OperatorDiv: public Operator {
@@ -50,7 +54,8 @@ private:
 public:
 	OperatorDiv();
 	~OperatorDiv();
-	math_exp_type resultType() override;
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
 };
 
 #endif
