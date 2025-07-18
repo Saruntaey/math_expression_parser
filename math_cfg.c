@@ -20,10 +20,10 @@
  * T -> (E) | <var> | <int> | <double>
 */
 
-static parse_status E();
+parse_status E();
+parse_status Q();
 static parse_status F();
 static parse_status T();
-static parse_status Q();
 static parse_status G();
 static parse_status P();
 static parse_status INEQ();

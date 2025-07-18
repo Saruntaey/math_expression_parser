@@ -226,24 +226,24 @@ static void process_white_space(int n) {
 
 %%
 
-extern void parse_equation();
-extern void parse_alternate_a_b();
-extern void parse_sql_select();
-extern void parse_math();
-extern void parse_inequlity();
-
-int main(int argc, char** argv) {
-	int token_code;
-
-	while (1) {
-		printf("input -> ");
-		fgets(lex_buffer, sizeof(lex_buffer), stdin);
-		stack_reset();
-		// parse_equation();
-		// parse_alternate_a_b();
-		// parse_sql_select();
-		// parse_math();
-		parse_inequlity();
-	}
-	return 0;
-}
+// extern void parse_equation();
+// extern void parse_alternate_a_b();
+// extern void parse_sql_select();
+// extern void parse_math();
+// extern void parse_inequlity();
+// 
+// int main(int argc, char** argv) {
+// 	int token_code;
+// 
+// 	while (1) {
+// 		printf("input -> ");
+// 		fgets(lex_buffer, sizeof(lex_buffer), stdin);
+// 		stack_reset();
+// 		// parse_equation();
+// 		// parse_alternate_a_b();
+// 		// parse_sql_select();
+// 		// parse_math();
+// 		parse_inequlity();
+// 	}
+// 	return 0;
+// }

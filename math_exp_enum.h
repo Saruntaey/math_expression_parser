@@ -18,9 +18,6 @@ typedef enum math_exp_type {
 	MATH_PLUS,
 	MATH_MINUS,
 	MATH_DIV,
-	MATH_OPERATOR_END,
-
-	MATH_COMMA,
 	MATH_SQRT,
 	MATH_SQR,
 	MATH_MAX,
@@ -28,6 +25,9 @@ typedef enum math_exp_type {
 	MATH_SIN,
 	MATH_COS,
 	MATH_POW,
+	MATH_OPERATOR_END,
+
+	MATH_COMMA,
 
 	MATH_OPERAND_START,
 	MATH_INTEGER_VALUE,
