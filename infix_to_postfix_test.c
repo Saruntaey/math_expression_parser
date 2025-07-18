@@ -143,6 +143,39 @@ int main(void) {
         {MATH_MUL, 1, "*" },
         {MATH_DOUBLE_VALUE, 3, "3.0" },
     };
+
+	// max(1, 2)
+    lex_data infix_array8[] = {
+        {MATH_MAX, 3, "max" },
+        {MATH_BRACKET_START, 1, "(" },
+        {MATH_INTEGER_VALUE, 1, "1" },
+        {MATH_COMMA, 1, "," },
+        {MATH_SPACE, 1, " " },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_BRACKET_END, 1, ")" },
+    };
+
+    // 1 + sqr(2) * sqrt(9) + pow(2,3) 
+    lex_data infix_array9[] = {
+        {MATH_INTEGER_VALUE, 1, "1" },
+        {MATH_PLUS, 1, "+" },
+        {MATH_SQR, 3, "sqr" },
+        {MATH_BRACKET_START, 1, "(" },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_BRACKET_END, 1, ")" },
+        {MATH_MUL, 1, "*" },
+        {MATH_SQRT, 4, "sqrt" },
+        {MATH_BRACKET_START, 1, "(" },
+        {MATH_INTEGER_VALUE, 1, "9" },
+        {MATH_BRACKET_END, 1, ")" },
+        {MATH_PLUS, 1, "+" },
+        {MATH_POW, 3, "pow" },
+        {MATH_BRACKET_START, 1, "(" },
+        {MATH_INTEGER_VALUE, 1, "2" },
+        {MATH_COMMA, 1, "," },
+        {MATH_INTEGER_VALUE, 1, "3" },
+        {MATH_BRACKET_END, 1, ")" },
+    };    
 	DO_TEST(infix_array1, 0);
 	DO_TEST(infix_array2, 0);
 	DO_TEST(infix_array3, 0);
@@ -150,4 +183,6 @@ int main(void) {
 	DO_TEST(infix_array5, 1);
 	DO_TEST(infix_array6, 1);
 	DO_TEST(infix_array7, 1);
+	DO_TEST(infix_array8, 1);
+	DO_TEST(infix_array9, 1);
 }
