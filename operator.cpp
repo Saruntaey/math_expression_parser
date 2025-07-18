@@ -1,4 +1,5 @@
 #include "operator.h"
+#include <math.h>
 #include <assert.h>
 #include "dtype.h"
 
@@ -16,6 +17,11 @@ Operator *Operator::factory(math_exp_type id) {
 	case MATH_MINUS: return new OperatorMinus();
 	case MATH_MUL: return new OperatorMul();
 	case MATH_DIV: return new OperatorDiv();
+	case MATH_SQRT: return new OperatorSqrt();
+	case MATH_SQR: return new OperatorSqr();
+	case MATH_MAX: return new OperatorMax();
+	case MATH_MIN: return new OperatorMin();
+	case MATH_POW: return new OperatorPow();
 	default: assert(0);
 	}
 }
@@ -282,6 +288,353 @@ DType *OperatorDiv::eval() {
 					res = new DTypeDouble();
 					((DTypeDouble *) res)->val = ((DTypeDouble *) left)->val / ((DTypeDouble *) right)->val ;
 					break;
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorSqr::OperatorSqr() {
+	this->id = MATH_SQR;
+	this->symbol = "sqr";
+	this->is_unary = true;
+};
+OperatorSqr::~OperatorSqr() {};
+
+math_exp_type OperatorSqr::resultType(math_exp_type a, math_exp_type b) {
+	switch (a) {
+	case MATH_INTEGER_VALUE: return MATH_INTEGER_VALUE;
+	case MATH_DOUBLE_VALUE: return MATH_DOUBLE_VALUE;
+	case MATH_WILDCARD_VALUE: return MATH_WILDCARD_VALUE;
+	default: return MATH_INVALID;
+	}
+}
+
+math_exp_type OperatorSqr::resultType() {
+	assert(!this->right);
+	if (!this->left) return MATH_INVALID;
+	return resultType(this->left->resultType(), MATH_INVALID);
+}
+
+DType *OperatorSqr::eval() {
+	assert(!this->right);
+	if (!this->left) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+
+	res = nullptr;
+	do {
+		if (!left) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			{
+				int v = ((DTypeInt *) left)->val;
+				res = new DTypeInt(v*v);
+				break;
+			}
+		case MATH_DOUBLE_VALUE:
+			{
+				double v = ((DTypeDouble *) left)->val;
+				res = new DTypeDouble(v*v);
+				break;
+			}
+		}
+	} while(0);
+
+	delete left;
+	return res;
+}
+
+OperatorSqrt::OperatorSqrt() {
+	this->id = MATH_SQRT;
+	this->symbol = "sqrt";
+	this->is_unary = true;
+};
+OperatorSqrt::~OperatorSqrt() {};
+
+math_exp_type OperatorSqrt::resultType(math_exp_type a, math_exp_type b) {
+	switch (a) {
+	case MATH_INTEGER_VALUE:
+	case MATH_DOUBLE_VALUE:
+	case MATH_WILDCARD_VALUE: 
+			return MATH_DOUBLE_VALUE;
+	default: 
+			return MATH_INVALID;
+	}
+}
+
+math_exp_type OperatorSqrt::resultType() {
+	assert(!this->right);
+	if (!this->left) return MATH_INVALID;
+	return resultType(this->left->resultType(), MATH_INVALID);
+}
+
+DType *OperatorSqrt::eval() {
+	assert(!this->right);
+	if (!this->left) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+
+	res = nullptr;
+	do {
+		if (!left) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			res = new DTypeDouble(sqrt(((DTypeInt *) left)->val));
+			break;
+		case MATH_DOUBLE_VALUE:
+			res = new DTypeDouble(sqrt(((DTypeDouble *) left)->val));
+			break;
+		}
+	} while(0);
+
+	delete left;
+	return res;
+}
+
+OperatorPow::OperatorPow() {
+	this->id = MATH_POW;
+	this->symbol = "pow";
+	this->is_unary = false;
+};
+OperatorPow::~OperatorPow() {};
+
+bool OperatorPow::checkType(math_exp_type t) {
+	switch (t) {
+	case MATH_INTEGER_VALUE:
+	case MATH_DOUBLE_VALUE:
+	case MATH_WILDCARD_VALUE:
+			return true;
+	default:
+			return false;
+	}
+}
+
+math_exp_type OperatorPow::resultType(math_exp_type a, math_exp_type b) {
+	return checkType(a) && checkType(b) ? MATH_DOUBLE_VALUE : MATH_INVALID;
+}
+
+math_exp_type OperatorPow::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorPow::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeDouble(pow(l, r));
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeDouble(pow(l, r));
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeDouble(pow(l, r));
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeDouble(pow(l, r));
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorMin::OperatorMin() {
+	this->id = MATH_MIN;
+	this->symbol = "min";
+	this->is_unary = false;
+};
+OperatorMin::~OperatorMin() {};
+
+math_exp_type OperatorMin::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE): return MATH_INTEGER_VALUE;
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE): return MATH_WILDCARD_VALUE;
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE): return MATH_INTEGER_VALUE;
+	default: return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorMin::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorMin::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeInt(l < r ? l : r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = l < r ? (DType *) new DTypeInt(l) : (DType *) new DTypeDouble(r); 
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = l < r ? (DType *) new DTypeDouble(l) : (DType *) new DTypeInt(r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeDouble(l < r ? l : r);
+						break;
+					}
+			}
+			break;
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorMax::OperatorMax() {
+	this->id = MATH_MAX;
+	this->symbol = "max";
+	this->is_unary = false;
+};
+OperatorMax::~OperatorMax() {};
+
+math_exp_type OperatorMax::resultType(math_exp_type a, math_exp_type b) {
+	switch (comb(a, b)) {
+	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE): return MATH_INTEGER_VALUE;
+	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
+	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE): return MATH_WILDCARD_VALUE;
+	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
+	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
+	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE): return MATH_INTEGER_VALUE;
+	default: return MATH_INVALID;
+	}
+
+}
+
+math_exp_type OperatorMax::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorMax::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		switch (left->id) {
+		case MATH_INTEGER_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = new DTypeInt(l > r ? l : r);
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						int l = ((DTypeInt *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = l > r ? (DType *) new DTypeInt(l) : (DType *) new DTypeDouble(r);
+						break;
+					}
+			}
+			break;
+		case MATH_DOUBLE_VALUE:
+			switch (right->id) {
+			case MATH_INTEGER_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						int r = ((DTypeInt *) right)->val;
+						res = l > r ? (DType *) new DTypeDouble(l) : (DType *) new DTypeInt(r); 
+						break;
+					}
+			case MATH_DOUBLE_VALUE:
+					{
+						double l = ((DTypeDouble *) left)->val;
+						double r = ((DTypeDouble *) right)->val;
+						res = new DTypeDouble(l > r ? l : r);
+						break;
+					}
 			}
 			break;
 		}
