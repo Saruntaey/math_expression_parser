@@ -17,6 +17,8 @@ public:
 };
 
 class MathExprTree {
+private:
+	void clear(MathExprNode *node);
 public:
 	MathExprNode *root;
 	MathExprTree(lex_data **postfix, int size);

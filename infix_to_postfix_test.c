@@ -34,7 +34,9 @@ extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 			case MATH_DOUBLE_VALUE: printf("%f", ((DTypeDouble *) res)->val); break; \
 			} \
 			printf("\n"); \
+			delete res; \
 		} \
+		delete tree; \
 	} \
 }
 

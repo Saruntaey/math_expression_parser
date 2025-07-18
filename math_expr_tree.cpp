@@ -50,7 +50,17 @@ MathExprTree::MathExprTree(lex_data **postfix, int size) {
 	assert(!this->root->parent);
 }
 
-MathExprTree::~MathExprTree() {}
+void MathExprTree::clear(MathExprNode *node) {
+	if (!node) return;
+	clear(node->left);
+	clear(node->right);
+	delete node;
+}
+
+MathExprTree::~MathExprTree() {
+	clear(this->root);
+	this->root = nullptr;
+}
 
 void MathExprTree::inorderPrint() {
 	_inorderPrint(this->root);
