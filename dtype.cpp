@@ -7,10 +7,11 @@ DType::DType() {
 }
 DType::~DType() {}
 
-DType *DType::factory(math_exp_type id) {
+DType *DType::factory(math_exp_type id, const char *v, DType *(*get_val)(const char *name)) {
 	switch (id) {
-	case MATH_INTEGER_VALUE: return new DTypeInt();
-	case MATH_DOUBLE_VALUE: return new DTypeDouble();
+	case MATH_INTEGER_VALUE: return new DTypeInt(v);
+	case MATH_DOUBLE_VALUE: return new DTypeDouble(v);
+	case MATH_IDENTIFIER: return new DTypeVar(v, get_val);
 	default: assert(0);
 	}
 }
@@ -18,6 +19,10 @@ DType *DType::factory(math_exp_type id) {
 DTypeInt::DTypeInt(int v) {
 	this->id = MATH_INTEGER_VALUE;
 	this->val = v;
+}
+
+DTypeInt::DTypeInt(const char *v): DTypeInt() {
+	setValue((void *) v);
 }
 
 void DTypeInt::setValue(void *v) {
@@ -43,6 +48,10 @@ DType *DTypeInt::clone() {
 DTypeDouble::DTypeDouble(double v) {
 	this->id = MATH_DOUBLE_VALUE;
 	this->val = v;
+}
+
+DTypeDouble::DTypeDouble(const char* v): DTypeDouble() {
+	setValue((void *) v);
 }
 
 void DTypeDouble::setValue(void *v) {
@@ -88,4 +97,45 @@ DType *DTypeBool::eval() {
 
 DType *DTypeBool::clone() {
 	return new DTypeBool(this->val);
+}
+
+DTypeVar::DTypeVar(const char *name, DType *(*get_val)(const char *name)) {
+	this->id = MATH_IDENTIFIER;
+	this->name.assign(name);
+	this->get_val = get_val;
+}
+
+
+
+void DTypeVar::set_get_val(DType *(*get_val)(const char *name)) {
+	this->get_val = get_val;
+}
+
+void DTypeVar::setValue(void *v) {
+	// empty
+}
+
+void DTypeVar::setValue(DType *v) {
+	// empty
+}
+
+math_exp_type DTypeVar::resultType() {
+	if (!this->get_val) return MATH_WILDCARD_VALUE;
+	DType *t = this->get_val(this->name.c_str());
+	if (!t) return MATH_WILDCARD_VALUE;
+	return t->id;
+}
+
+DType *DTypeVar::eval() {
+	if (!this->get_val) return nullptr;
+	return this->get_val(this->name.c_str());
+}
+
+DType *DTypeVar::clone() {
+	DTypeVar *c = new DTypeVar(this->name.c_str());
+	*c = *this;
+	c->left = nullptr;
+	c->right = nullptr;
+	c->parent = nullptr;
+	return c;
 }

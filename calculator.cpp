@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parser_export.h"
 #include "math_expr_tree.h"
 #include "dtype.h"
@@ -7,6 +8,16 @@
 extern parse_status E();
 extern parse_status Q();
 extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
+
+DType *get_val(const char *name) {
+	if (strcmp(name, "a") == 0) {
+		return new DTypeInt(2);
+	}
+	if (strcmp(name, "b") == 0) {
+		return new DTypeDouble(1.5);
+	}
+	return nullptr;
+}
 
 int main(void) {
 	parse_status s;
@@ -30,7 +41,9 @@ int main(void) {
 			continue;
 		}
 		postfix = infix_to_postfix(lex_stack.data, lex_stack.top + 1, &postfix_len);
-		tree = new MathExprTree(postfix, postfix_len);
+		tree = new MathExprTree(postfix, postfix_len, get_val);
+		// tree = new MathExprTree(postfix, postfix_len);
+		// tree->setGetVal(get_val);
 		do {
 			if (!tree->valid()) {
 				printf("invalid math operation\n");

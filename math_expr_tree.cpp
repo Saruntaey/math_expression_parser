@@ -16,7 +16,7 @@ MathExprNode::MathExprNode() {
 
 MathExprNode::~MathExprNode() {}
 
-MathExprTree::MathExprTree(lex_data **postfix, int size) {
+MathExprTree::MathExprTree(lex_data **postfix, int size, DType *(*get_val)(const char *name)) {
 	lex_data *l;
 	std::stack<MathExprNode *> s;
 
@@ -25,9 +25,12 @@ MathExprTree::MathExprTree(lex_data **postfix, int size) {
 		if (l->token_code == MATH_SPACE) continue;
 		assert(is_operator(l->token_code) || is_operand(l->token_code));
 		if (is_operand(l->token_code)) {
-			DType *o = DType::factory(l->token_code);
-			o->setValue(l->text);
+			DType *o = DType::factory(l->token_code, l->text, get_val);
 			s.push(o);
+			DTypeVar *var = dynamic_cast<DTypeVar *>(o);
+			if (var) {
+				this->vars.push_back(var);
+			}
 		} else if (is_unary_op(l->token_code)) {
 	  		MathExprNode *node = Operator::factory(l->token_code);
 			MathExprNode *left = s.top(); s.pop();
@@ -92,4 +95,10 @@ static void _inorderPrint(MathExprNode *node) {
 		}
 	}
 	_inorderPrint(node->right);
+}
+
+void MathExprTree::setGetVal(DType *(*get_val)(const char *name)){
+	for (std::list<DTypeVar *>::iterator it = this->vars.begin(); it != this->vars.end(); it++) {
+		(*it)->set_get_val(get_val);
+	}
 }
