@@ -7,6 +7,7 @@
 
 extern parse_status E();
 extern parse_status Q();
+extern parse_status S();
 extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 
 DType *get_val(const char *name) {
@@ -31,9 +32,12 @@ int main(void) {
 		printf("input -> ");
 		fgets(lex_buffer, sizeof(lex_buffer), stdin);
 		stack_reset();
-		s = Q();
+		s = S();
 		if (s == PARSE_ERROR) {
-			s = E();
+			s = Q();
+			if (s == PARSE_ERROR) {
+				s = E();
+			}
 		}
 		d = cyylex(); yyrewind(1);
 		if (s == PARSE_ERROR || d.token_code != PARSER_EOL) {

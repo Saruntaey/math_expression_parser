@@ -170,4 +170,26 @@ public:
 	virtual DType *eval() override;
 };
 
+class OperatorAnd: public Operator {
+private:
+	math_exp_type resultType(math_exp_type a, math_exp_type b); 
+	bool checkType(math_exp_type t);
+public:
+	OperatorAnd();
+	~OperatorAnd();
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
+};
+
+class OperatorOr: public Operator {
+private:
+	math_exp_type resultType(math_exp_type a, math_exp_type b); 
+	bool checkType(math_exp_type t);
+public:
+	OperatorOr();
+	~OperatorOr();
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
+};
+
 #endif

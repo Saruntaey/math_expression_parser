@@ -28,6 +28,8 @@ Operator *Operator::factory(math_exp_type id) {
     case MATH_GREATER_THAN_EQ: return new OperatorGreaterThanEq();
 	case MATH_EQ: return new OperatorEqual();
 	case MATH_NOT_EQ: return new OperatorNotEqual();
+	case MATH_AND: return new OperatorAnd();
+	case MATH_OR: return new OperatorOr();
 	default: assert(0);
 	}
 }
@@ -1149,3 +1151,110 @@ DType *OperatorNotEqual::eval() {
 	delete right;
 	return res;
 }
+
+OperatorAnd::OperatorAnd() {
+	this->id = MATH_AND;
+	this->symbol = "and";
+	this->is_unary = false;
+};
+OperatorAnd::~OperatorAnd() {};
+
+
+bool OperatorAnd::checkType(math_exp_type t) {
+	switch (t) {
+	case MATH_BOOL:
+	case MATH_WILDCARD_VALUE:
+		return true;
+	default:
+		return false;
+	}
+}
+
+math_exp_type OperatorAnd::resultType(math_exp_type a, math_exp_type b) {
+	if (checkType(a) && checkType(b)) {
+		return MATH_BOOL;
+	}
+	return MATH_INVALID;
+}
+
+math_exp_type OperatorAnd::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorAnd::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		if (left->id == MATH_BOOL && right->id == MATH_BOOL) {
+			bool l = ((DTypeBool *) left)->val;
+			bool r = ((DTypeBool *) right)->val;
+			res = new DTypeBool(l && r);
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+
+OperatorOr::OperatorOr() {
+	this->id = MATH_OR;
+	this->symbol = "or";
+	this->is_unary = false;
+};
+OperatorOr::~OperatorOr() {};
+
+
+bool OperatorOr::checkType(math_exp_type t) {
+	switch (t) {
+	case MATH_BOOL:
+	case MATH_WILDCARD_VALUE:
+		return true;
+	default:
+		return false;
+	}
+}
+
+math_exp_type OperatorOr::resultType(math_exp_type a, math_exp_type b) {
+	if (checkType(a) && checkType(b)) {
+		return MATH_BOOL;
+	}
+	return MATH_INVALID;
+}
+
+math_exp_type OperatorOr::resultType() {
+	if (!this->left || !this->right) return MATH_INVALID;
+	return resultType(this->left->resultType(), this->right->resultType());
+}
+
+DType *OperatorOr::eval() {
+	if (!this->left || !this->right) {
+		return nullptr;
+	}
+	DType *res;
+	DType *left = this->left->eval();
+	DType *right = this->right->eval();
+
+	res = nullptr;
+	do {
+		if (!left || !right) break;
+		if (left->id == MATH_BOOL && right->id == MATH_BOOL) {
+			bool l = ((DTypeBool *) left)->val;
+			bool r = ((DTypeBool *) right)->val;
+			res = new DTypeBool(l || r);
+		}
+	} while(0);
+
+	delete left;
+	delete right;
+	return res;
+}
+

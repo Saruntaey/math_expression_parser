@@ -28,7 +28,7 @@ $(OUTDIR):
 
 .PHONY: clean run test
 clean:
-	rm -f lex.yy.c $(addprefix $(OUTDIR)/, $(TARGET) lex.yy.o $(OBJS) $(OBJS_CPP) $(TEST_OBJS)) 
+	rm -f lex.yy.c $(addprefix $(OUTDIR)/, $(TARGET) lex.yy.o $(OBJS) $(OBJS_CPP) $(TEST_OBJS) infix_to_postfix_test) 
 
 run: $(OUTDIR)/$(TARGET)
 	./$(OUTDIR)/$(TARGET)

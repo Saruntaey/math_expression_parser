@@ -20,13 +20,23 @@
  * T -> (E) | <var> | <int> | <double>
 */
 
-parse_status E();
-parse_status Q();
+parse_status E(); // math expression
 static parse_status F();
 static parse_status T();
 static parse_status G();
 static parse_status P();
+
+parse_status Q(); // inequality expression
 static parse_status INEQ();
+
+parse_status S(); // logical expression
+static parse_status S_dash();
+static parse_status J();
+static parse_status J_dash();
+static parse_status K();
+static parse_status K_dash();
+static parse_status D();
+static parse_status LOP();
 
 // E -> F + E | F - E | F
 // F -> T * F | T / F | T
@@ -259,6 +269,189 @@ parse_status INEQ() {
 	case MATH_LESS_THAN_EQ:
 	case MATH_GREATER_THAN:
 	case MATH_GREATER_THAN_EQ:
+		return PARSE_SUCCESS;
+	default:
+		RETURN_PARSE_ERROR;
+	}
+}
+
+/*
+ * Logical Expression
+ * 1. S -> S or J | J
+ * 2. J -> J and K | K 
+ * 3. K -> (S) | D | K LOP Q | Q LOP K
+ * 4. D -> Q LOP Q
+ * 5. LOP -> and | or
+ * 
+ * Removing Left Recursion :
+ * 1. S -> S or J | J
+ *     S -> J S'
+ *     S' -> or J S' | $
+ * 2. J -> J and K | K
+ *     J -> K J'
+ *     J' -> and K J' | $
+ * 3. K -> (S) | D | K LOP Q | Q LOP K
+ *     K -> (S) K' |  D K' |  Q LOP K K'
+ *     K' -> LOP Q K' | $
+ * 
+ * Overall Grammar will be :
+ * =====================
+ * 1. S -> J S'
+ * 2. S' -> or J S' | $
+ * 3. J -> K J'
+ * 4. J' -> and K J' | $
+ * 5. K -> (S) K' | D K' | Q LOP K K'
+ * 6. K' -> LOP Q K' | $
+ * 7. D -> Q LOP Q
+ * 8. LOP -> and | or
+*/
+
+// S -> J S'
+parse_status S() {
+	PARSE_INIT;
+	parse_status s;
+
+	s = J();
+	if (s == PARSE_ERROR) RETURN_PARSE_ERROR;
+	s = S_dash();
+	if (s == PARSE_ERROR) RETURN_PARSE_ERROR;
+	return PARSE_SUCCESS;
+}
+
+// S' -> or J S' | $
+parse_status S_dash() {
+	PARSE_INIT;
+	parse_status s;
+
+	do {
+		d = cyylex();
+		if (d.token_code != MATH_OR) break;
+		s = J();
+		if (s == PARSE_ERROR) break;
+		s = S_dash();
+		if (s == PARSE_ERROR) break;
+		return PARSE_SUCCESS;
+	} while (0);
+	RESTORE_CHECK_POINT;
+
+	return PARSE_SUCCESS;
+}
+
+
+// J -> K J'
+parse_status J() {
+	PARSE_INIT;
+	parse_status s;
+
+	s = K();
+	if (s == PARSE_ERROR) RETURN_PARSE_ERROR;
+	s = J_dash();
+	if (s == PARSE_ERROR) RETURN_PARSE_ERROR;
+	return PARSE_SUCCESS;
+}
+
+// J' -> and K J' | $
+parse_status J_dash() {
+	PARSE_INIT;
+	parse_status s;
+
+	do {
+		d = cyylex();
+		if (d.token_code != MATH_AND) break;
+		s = K();
+		if (s == PARSE_ERROR) break;
+		s = J_dash();
+		if (s == PARSE_ERROR) break;
+		return PARSE_SUCCESS;
+	} while(0);
+	RESTORE_CHECK_POINT;
+
+	return PARSE_SUCCESS;
+}
+
+// K -> (S) K' | D K' | Q LOP K K'
+parse_status K() {
+	PARSE_INIT;
+	parse_status s;
+
+	do {
+		d = cyylex();
+		if (d.token_code != MATH_BRACKET_START) break;
+		s = S();
+		if (s == PARSE_ERROR) break;
+		d = cyylex();
+		if (d.token_code != MATH_BRACKET_END) break;
+		s = K_dash();
+		if (s == PARSE_ERROR) break;
+		return PARSE_SUCCESS;
+	} while(0);
+	RESTORE_CHECK_POINT;
+
+	do {
+		s = D();
+		if (s == PARSE_ERROR) break;
+		s = K_dash();
+		if (s == PARSE_ERROR) break;
+		return PARSE_SUCCESS;
+	} while(0);
+	RESTORE_CHECK_POINT;
+
+	do {
+		s = Q();
+		if (s == PARSE_ERROR) break;
+		s = LOP();
+		if (s == PARSE_ERROR) break;
+		s = K();
+		if (s == PARSE_ERROR) break;
+		s = K_dash();
+		if (s == PARSE_ERROR) break;
+		return PARSE_SUCCESS;
+	} while(0);
+
+	RETURN_PARSE_ERROR;
+}
+
+ // K' -> LOP Q K' | $
+parse_status K_dash() {
+	PARSE_INIT;
+	parse_status s;
+
+	do {
+		s = LOP();
+		if (s == PARSE_ERROR) break;
+		s = Q();
+		if (s == PARSE_ERROR) break;
+		s = K_dash();
+		if (s == PARSE_ERROR) break;
+		return PARSE_SUCCESS;
+	} while(0);
+	RESTORE_CHECK_POINT;
+
+	return PARSE_SUCCESS;
+}
+
+// D -> Q LOP Q
+parse_status D() {
+	PARSE_INIT;
+	parse_status s;
+
+	s = Q();
+	if (s == PARSE_ERROR) RETURN_PARSE_ERROR;
+	s = LOP();
+	if (s == PARSE_ERROR) RETURN_PARSE_ERROR;
+	s = Q();
+	if (s == PARSE_ERROR) RETURN_PARSE_ERROR;
+	return PARSE_SUCCESS;
+}
+
+// LOP -> and | or
+parse_status LOP() {
+	PARSE_INIT;
+
+	d = cyylex();
+	switch (d.token_code) {
+	case MATH_AND:
+	case MATH_OR:
 		return PARSE_SUCCESS;
 	default:
 		RETURN_PARSE_ERROR;
