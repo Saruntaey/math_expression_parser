@@ -1,6 +1,6 @@
 # Math Expression Parser
 
-This project parse input string to token and evaluate the math expression result.
+This project parse input string to token and evaluate the math expression result. For implementation detail see [blog](https://dev.to/taey/series/32557).
 
 ## Synopsis
 
