@@ -2,9 +2,11 @@
 #include <assert.h>
 #include <stack>
 #include "parser_export.h"
+#include "math_exp_enum.h"
 #include "math_expr_tree.h"
 #include "operator.h"
 #include "dtype.h"
+#include "adapter.h"
 
 static void _inorderPrint(MathExprNode *node); 
 
@@ -22,23 +24,23 @@ MathExprTree::MathExprTree(lex_data **postfix, int size, DType *(*get_val)(const
 
 	for (int i = 0; i < size; i++) {
 		l = postfix[i];
-		if (l->token_code == MATH_SPACE) continue;
-		assert(is_operator(l->token_code) || is_operand(l->token_code));
-		if (is_operand(l->token_code)) {
-			DType *o = DType::factory(l->token_code, l->text, get_val);
+		if (l->token_code == PARSER_WHITE_SPACE) continue;
+		assert(is_operator(_tokcnv(l->token_code)) || is_operand(_tokcnv(l->token_code)));
+		if (is_operand(_tokcnv(l->token_code))) {
+			DType *o = DType::factory((math_exp_type) _tokcnv(l->token_code), l->text, get_val);
 			s.push(o);
 			DTypeVar *var = dynamic_cast<DTypeVar *>(o);
 			if (var) {
 				this->vars.push_back(var);
 			}
-		} else if (is_unary_op(l->token_code)) {
-	  		MathExprNode *node = Operator::factory(l->token_code);
+		} else if (is_unary_op(_tokcnv(l->token_code))) {
+	  		MathExprNode *node = Operator::factory((math_exp_type) _tokcnv(l->token_code));
 			MathExprNode *left = s.top(); s.pop();
 			left->parent = node;
 			node->left = left;
 			s.push(node);
 		} else {
-			MathExprNode *node = Operator::factory(l->token_code);
+			MathExprNode *node = Operator::factory((math_exp_type) _tokcnv(l->token_code));
 			MathExprNode *right = s.top(); s.pop();
 			MathExprNode *left = s.top(); s.pop();
 			node->left = left;

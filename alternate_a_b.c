@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "parser_export.h"
+#include "math_exp_enum.h"
 
 static parse_status A();
 static parse_status B();

@@ -1,5 +1,7 @@
-#include "parser_export.h"
 #include <stdio.h>
+#include "parser_export.h"
+#include "math_exp_enum.h"
+#include "adapter.h"
 
 
 /*
@@ -69,7 +71,7 @@ parse_status E() {
 		s = F();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_PLUS) break;
+		if (_tokcmp(d.token_code, MATH_PLUS)) break;
 		s = E();
 		if (s == PARSE_ERROR) break;
 		return PARSE_SUCCESS;
@@ -81,7 +83,7 @@ parse_status E() {
 		s = F();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_MINUS) break;
+		if (_tokcmp(d.token_code, MATH_MINUS)) break;
 		s = E();
 		if (s == PARSE_ERROR) break;
 		return PARSE_SUCCESS;
@@ -108,7 +110,7 @@ parse_status F() {
 		s = T();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_MUL) break;
+		if (_tokcmp(d.token_code, MATH_MUL)) break;
 		s = F();
 		if (s == PARSE_ERROR) break;
 		return PARSE_SUCCESS;
@@ -120,7 +122,7 @@ parse_status F() {
 		s = T();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_DIV) break;
+		if (_tokcmp(d.token_code, MATH_DIV)) break;
 		s = F();
 		if (s == PARSE_ERROR) break;
 		return PARSE_SUCCESS;
@@ -146,11 +148,11 @@ parse_status T() {
 	// T -> (E)
 	do {
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_START) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_START)) break;
 		s = E();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_END) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_END)) break;
 		return PARSE_SUCCESS;
 	} while(0);
 	RESTORE_CHECK_POINT;
@@ -158,7 +160,7 @@ parse_status T() {
 	// T -> <var>
 	do {
 		d = cyylex();
-		if (d.token_code != MATH_IDENTIFIER) break;
+		if (_tokcmp(d.token_code, MATH_IDENTIFIER)) break;
 		return PARSE_SUCCESS;
 	} while(0);
 	RESTORE_CHECK_POINT;
@@ -166,7 +168,7 @@ parse_status T() {
 	// T -> <int>
 	do {
 		d = cyylex();
-		if (d.token_code != MATH_INTEGER_VALUE) break;
+		if (_tokcmp(d.token_code, MATH_INTEGER_VALUE)) break;
 		return PARSE_SUCCESS;
 	} while(0);
 	RESTORE_CHECK_POINT;
@@ -174,7 +176,7 @@ parse_status T() {
 	// T -> <double>
 	do {
 		d = cyylex();
-		if (d.token_code != MATH_DOUBLE_VALUE) break;
+		if (_tokcmp(d.token_code, MATH_DOUBLE_VALUE)) break;
 		return PARSE_SUCCESS;
 	} while(0);
 	RESTORE_CHECK_POINT;
@@ -184,11 +186,11 @@ parse_status T() {
 		s = G();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_START) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_START)) break;
 		s = E();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_END) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_END)) break;
 		return PARSE_SUCCESS;
 	} while(0);
 	RESTORE_CHECK_POINT;
@@ -198,15 +200,15 @@ parse_status T() {
 		s = P();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_START) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_START)) break;
 		s = E();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_COMMA) break;
+		if (_tokcmp(d.token_code, MATH_COMMA)) break;
 		s = E();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_END) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_END)) break;
 		return PARSE_SUCCESS;
 	} while(0);
 
@@ -217,7 +219,7 @@ parse_status G() {
 	PARSE_INIT;
 
 	d = cyylex();
-	switch (d.token_code) {
+	switch (_tokcnv(d.token_code)) {
 	case MATH_SQRT:
 	case MATH_SQR:
 	case MATH_SIN:
@@ -233,7 +235,7 @@ parse_status P() {
 	PARSE_INIT;
 
 	d = cyylex();
-	switch (d.token_code) {
+	switch (_tokcnv(d.token_code)) {
 	case MATH_MAX:
 	case MATH_MIN:
 	case MATH_POW:
@@ -262,7 +264,7 @@ parse_status INEQ() {
 	PARSE_INIT;
 
 	d = cyylex();
-	switch (d.token_code) {
+	switch (_tokcnv(d.token_code)) {
 	case MATH_EQ:
 	case MATH_NOT_EQ:
 	case MATH_LESS_THAN:
@@ -325,7 +327,7 @@ parse_status S_dash() {
 
 	do {
 		d = cyylex();
-		if (d.token_code != MATH_OR) break;
+		if (_tokcmp(d.token_code, MATH_OR)) break;
 		s = J();
 		if (s == PARSE_ERROR) break;
 		s = S_dash();
@@ -357,7 +359,7 @@ parse_status J_dash() {
 
 	do {
 		d = cyylex();
-		if (d.token_code != MATH_AND) break;
+		if (_tokcmp(d.token_code, MATH_AND)) break;
 		s = K();
 		if (s == PARSE_ERROR) break;
 		s = J_dash();
@@ -376,11 +378,11 @@ parse_status K() {
 
 	do {
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_START) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_START)) break;
 		s = S();
 		if (s == PARSE_ERROR) break;
 		d = cyylex();
-		if (d.token_code != MATH_BRACKET_END) break;
+		if (_tokcmp(d.token_code, MATH_BRACKET_END)) break;
 		s = K_dash();
 		if (s == PARSE_ERROR) break;
 		return PARSE_SUCCESS;
@@ -449,7 +451,7 @@ parse_status LOP() {
 	PARSE_INIT;
 
 	d = cyylex();
-	switch (d.token_code) {
+	switch (_tokcnv(d.token_code)) {
 	case MATH_AND:
 	case MATH_OR:
 		return PARSE_SUCCESS;

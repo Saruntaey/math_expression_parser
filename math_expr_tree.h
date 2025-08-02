@@ -1,7 +1,9 @@
 #ifndef _MATH_EXPR_TREE_
 #define _MATH_EXPR_TREE_
-#include "parser_export.h"
+
 #include <list>
+#include "parser_export.h"
+#include "math_exp_enum.h"
 
 class DType;
 class DTypeVar;

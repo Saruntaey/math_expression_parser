@@ -10,6 +10,10 @@ extern parse_status Q();
 extern parse_status S();
 extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 
+int app_to_mexpr_enum_converter(int token_code) {
+	return token_code;
+}
+
 DType *get_val(const char *name) {
 	if (strcmp(name, "a") == 0) {
 		return new DTypeInt(2);

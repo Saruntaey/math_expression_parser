@@ -6,6 +6,10 @@
 
 extern lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out);
 
+int app_to_mexpr_enum_converter(int token_code) {
+	return token_code;
+}
+
 #define DO_TEST(infix_array, test_tree) { \
 	int n; \
 	int len; \
@@ -47,13 +51,13 @@ int main(void) {
 	// a + b * c
     lex_data infix_array1[] = {
         {MATH_IDENTIFIER, 1, "a" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_PLUS, 1, "+" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_IDENTIFIER, 1, "b" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_MUL, 1, "*" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_IDENTIFIER, 1, "c" },
     };
 
@@ -64,7 +68,7 @@ int main(void) {
         {MATH_BRACKET_START, 1, "(" },
         {MATH_IDENTIFIER, 1, "a" },
         {MATH_COMMA, 1, "," },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_IDENTIFIER, 1, "b" },
         {MATH_BRACKET_END, 1, ")" },
     };
@@ -113,13 +117,13 @@ int main(void) {
 	// 10 + 12 * 42.3 / (2 - 0.5)
     lex_data infix_array5[] = {
         {MATH_INTEGER_VALUE, 2, "10" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_PLUS, 1, "+" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_INTEGER_VALUE, 2, "12" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_MUL, 1, "*" },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_DOUBLE_VALUE, 4, "42.3" },
         {MATH_DIV, 1, "/" },
         {MATH_BRACKET_START, 1, "(" },
@@ -153,7 +157,7 @@ int main(void) {
         {MATH_BRACKET_START, 1, "(" },
         {MATH_INTEGER_VALUE, 1, "1" },
         {MATH_COMMA, 1, "," },
-        {MATH_SPACE, 1, " " },
+        {PARSER_WHITE_SPACE, 1, " " },
         {MATH_INTEGER_VALUE, 1, "2" },
         {MATH_BRACKET_END, 1, ")" },
     };

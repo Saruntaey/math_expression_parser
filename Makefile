@@ -8,8 +8,8 @@ SRCS = $(filter-out lex.yy.c $(wildcard *_test.c), $(wildcard *.c))
 SRCS_CPP = $(wildcard *.cpp)
 OBJS = $(SRCS:.c=.o)
 OBJS_CPP = $(SRCS_CPP:.cpp=.o)
-TEST_OBJS = infix_to_postfix_test.o infix_to_postfix.o math_expr_tree.o operator.o dtype.o
-LIB_OBJS = math_cfg.o infix_to_postfix.o math_expr_tree.o operator.o dtype.o
+TEST_OBJS = infix_to_postfix_test.o infix_to_postfix.o math_expr_tree.o operator.o dtype.o adapter.o
+LIB_OBJS = math_cfg.o infix_to_postfix.o math_expr_tree.o operator.o dtype.o adapter.o
 
 all: $(LIB) $(OUTDIR)/$(TARGET) $(OUTDIR)/infix_to_postfix_test
 

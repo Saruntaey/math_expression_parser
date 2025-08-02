@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "parser_export.h"
+#include "math_exp_enum.h"
+#include "adapter.h"
 
 typedef struct _stack {
 	int top;
@@ -28,26 +30,26 @@ lex_data **infix_to_postfix(lex_data *infix, int size_in, int *size_out) {
 
 	for (int i = 0; i < size_in; i++) {
 		l = &infix[i];
-		if (l->token_code == MATH_SPACE) continue;
-		if (is_operand(l->token_code)) {
+		if (l->token_code == PARSER_WHITE_SPACE) continue;
+		if (is_operand(_tokcnv(l->token_code))) {
 			postfix[len++] = l;
-		} else if (l->token_code == MATH_BRACKET_START) {
+		} else if (_tokcnv(l->token_code) == MATH_BRACKET_START) {
 			stack_push(&s, (void *) l);
-		} else if (l->token_code == MATH_BRACKET_END) {
+		} else if (_tokcnv(l->token_code) == MATH_BRACKET_END) {
 			while (1) {
 				o = (lex_data*) stack_pop(&s);
-				if (o->token_code == MATH_BRACKET_START) {
+				if (_tokcnv(o->token_code) == MATH_BRACKET_START) {
 					break;
 				}
 				postfix[len++] = o;
 			}
-		} else if (l->token_code == MATH_COMMA) {
-			while (!stack_is_empty(&s) && ((lex_data*) stack_peek(&s))->token_code != MATH_BRACKET_START) {
+		} else if (_tokcnv(l->token_code) == MATH_COMMA) {
+			while (!stack_is_empty(&s) && _tokcnv(((lex_data*) stack_peek(&s))->token_code) != MATH_BRACKET_START) {
 				postfix[len++] = (lex_data*) stack_pop(&s);
 			}
 		}else {
-			if (!is_unary_op(l->token_code)) {
-				while (!stack_is_empty(&s) && precedent(l->token_code) <= precedent(((lex_data*) stack_peek(&s))->token_code)) {
+			if (!is_unary_op(_tokcnv(l->token_code))) {
+				while (!stack_is_empty(&s) && precedent(_tokcnv(l->token_code)) <= precedent(_tokcnv(((lex_data*) stack_peek(&s))->token_code))) {
 					postfix[len++] = (lex_data*) stack_pop(&s);
 				}
 			}

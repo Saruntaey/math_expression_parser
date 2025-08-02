@@ -1,5 +1,6 @@
 %{
 #include "parser_export.h"
+#include "math_exp_enum.h"
 
 char lex_buffer[MAX_STR_SIZE];
 char *curr_ptr = lex_buffer;
@@ -53,7 +54,7 @@ void yyrewind(int n) {
 		i = lex_stack.top;
 		free(lex_stack.data[i].text);
 		lex_stack.data[i].text = NULL;
-		if (lex_stack.data[i].token_code != MATH_SPACE) {
+		if (lex_stack.data[i].token_code != PARSER_WHITE_SPACE) {
 			n--;
 		}
 		curr_ptr -= lex_stack.data[lex_stack.top--].len;
@@ -74,7 +75,7 @@ void restore(int _chkp) {
 }
 
 static void process_white_space(int n) {
-	lex_data d = {.token_code = MATH_SPACE, .len = n};
+	lex_data d = {.token_code = PARSER_WHITE_SPACE, .len = n};
 	stack_push(d);
 	curr_ptr += n;
 }

@@ -1,6 +1,7 @@
-#include "parser_export.h"
 #include <string.h>
 #include <stdio.h>
+#include "parser_export.h"
+#include "math_exp_enum.h"
 
 void parse_sql_select();
 static parse_status Q();

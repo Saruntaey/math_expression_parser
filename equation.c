@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "parser_export.h"
+#include "math_exp_enum.h"
 
 // pow(x,2) + pow(y,2) = c
 static parse_status circle_eql() {
