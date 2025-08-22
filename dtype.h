@@ -1,8 +1,21 @@
 #ifndef _DTYPE_
 #define _DTYPE_
-#include "math_expr_tree.h"
 #include "math_exp_enum.h"
 #include <string>
+
+class DType;
+
+class MathExprNode {
+protected:
+	MathExprNode();
+public:
+	virtual ~MathExprNode();
+	MathExprNode *parent;
+	MathExprNode *left;
+	MathExprNode *right;
+	virtual math_exp_type resultType() = 0;
+	virtual DType *eval() = 0;
+};
 
 class DType: public MathExprNode {
 protected:

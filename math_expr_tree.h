@@ -3,22 +3,7 @@
 
 #include <list>
 #include "parser_export.h"
-#include "math_exp_enum.h"
-
-class DType;
-class DTypeVar;
-
-class MathExprNode {
-protected:
-	MathExprNode();
-public:
-	virtual ~MathExprNode();
-	MathExprNode *parent;
-	MathExprNode *left;
-	MathExprNode *right;
-	virtual math_exp_type resultType() = 0;
-	virtual DType *eval() = 0;
-};
+#include "dtype.h"
 
 class MathExprTree {
 private:
