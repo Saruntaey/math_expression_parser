@@ -1,4 +1,5 @@
 #include "operator.h"
+#include <cstring>
 #include <math.h>
 #include <assert.h>
 #include "dtype.h"
@@ -1009,10 +1010,12 @@ math_exp_type OperatorEqual::resultType(math_exp_type a, math_exp_type b) {
 	switch (comb(a, b)) {
 	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE):
 	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE):
+	case comb(MATH_STRING_VALUE, MATH_STRING_VALUE):
 	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE):
 	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE):
 	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE):
 	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE):
+	case comb(MATH_STRING_VALUE, MATH_WILDCARD_VALUE):
 		return MATH_BOOL;
 	default: 
 		return MATH_INVALID;
@@ -1073,6 +1076,17 @@ DType *OperatorEqual::eval() {
 					}
 			}
 			break;
+		case MATH_STRING_VALUE:
+			switch (right->id) {
+			case MATH_STRING_VALUE:
+					{
+						const char *l = ((DTypeStr *) left)->val.c_str();
+						const char *r = ((DTypeStr *) right)->val.c_str();
+						res = new DTypeBool(strcmp(l, r) == 0);
+						break;
+					}
+			break;
+			}
 		}
 	} while(0);
 
