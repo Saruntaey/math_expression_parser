@@ -89,6 +89,7 @@ public:
 	virtual math_exp_type resultType() override;
 	virtual DType *eval() override;
 	virtual DType *clone() override;
+	std::string get_name();
 };
 
 #endif

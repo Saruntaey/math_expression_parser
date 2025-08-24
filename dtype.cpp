@@ -180,3 +180,7 @@ DType *DTypeVar::clone() {
 	c->parent = nullptr;
 	return c;
 }
+
+std::string DTypeVar::get_name() {
+	return this->name;
+}

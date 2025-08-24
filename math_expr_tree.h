@@ -8,8 +8,8 @@
 class MathExprTree {
 private:
 	void clear(MathExprNode *node);
-	std::list<DTypeVar *> vars;
 public:
+	std::list<DTypeVar *> vars;
 	MathExprNode *root;
 	MathExprTree(lex_data **postfix, int size, DType *(get_val)(const char *name)=nullptr);
 	virtual ~MathExprTree();
