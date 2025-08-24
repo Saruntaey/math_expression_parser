@@ -66,6 +66,17 @@ public:
 	virtual DType *clone() override;
 };
 
+class DTypeStr: public DType {
+public:
+	std::string val;
+	DTypeStr(const char *v);
+	virtual void setValue(void *v) override;
+	virtual void setValue(DType *v) override;
+	virtual math_exp_type resultType() override;
+	virtual DType *eval() override;
+	virtual DType *clone() override;
+};
+
 class DTypeVar: public DType {
 private:
 	std::string name;

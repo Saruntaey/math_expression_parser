@@ -7,19 +7,19 @@
 /*
  * E -> E + F | E - F | F
  * F -> F * T | F / T | T
- * T -> (E) | <var> | <int> | <double>
- * ---
+ * T -> (E) | <var> | <int> | <double> | <string>
+ * --- opt 1
  * E -> F + E | F - E | F
  * F -> T * F | T / F | T
- * T -> (E) | <var> | <int> | <double> 
- * ---
+ * T -> (E) | <var> | <int> | <double> | <string>
+ * --- opt 2
  * E -> FE'
  * E' -> +FE' | -FE' | $ // $ mean empty
  *
  * F -> TF'
  * F' -> *TF' | /TF' | $
  *
- * T -> (E) | <var> | <int> | <double>
+ * T -> (E) | <var> | <int> | <double> | <string>
 */
 
 parse_status E(); // math expression
@@ -42,7 +42,7 @@ static parse_status LOP();
 
 // E -> F + E | F - E | F
 // F -> T * F | T / F | T
-// T -> (E) | <var> | <int> | <double> | G(E) | P(E, E)
+// T -> (E) | <var> | <int> | <double> | <string> | G(E) | P(E, E)
 // G -> sqr | sqrt | sin | cos
 // P -> min | max | pow
 void parse_math() {
@@ -140,7 +140,7 @@ parse_status F() {
 }
 
 
-// T -> (E) | <var> | <int> | <double> | G(E) | P(E, E)
+// T -> (E) | <var> | <int> | <double> | <string> | G(E) | P(E, E)
 parse_status T() {
 	PARSE_INIT;
 	parse_status s;
@@ -177,6 +177,14 @@ parse_status T() {
 	do {
 		d = cyylex();
 		if (_tokcnv(d.token_code) != MATH_DOUBLE_VALUE) break;
+		return PARSE_SUCCESS;
+	} while(0);
+	RESTORE_CHECK_POINT;
+
+	// T -> <string>
+	do {
+		d = cyylex();
+		if (_tokcnv(d.token_code) != MATH_STRING_VALUE) break;
 		return PARSE_SUCCESS;
 	} while(0);
 	RESTORE_CHECK_POINT;

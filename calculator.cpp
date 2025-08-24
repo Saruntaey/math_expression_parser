@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "math_exp_enum.h"
 #include "parser_export.h"
 #include "math_expr_tree.h"
 #include "dtype.h"
@@ -66,6 +67,7 @@ int main(void) {
 			case MATH_INTEGER_VALUE: printf("%d", ((DTypeInt *) res)->val); break; 
 			case MATH_DOUBLE_VALUE: printf("%f", ((DTypeDouble *) res)->val); break; 
 			case MATH_BOOL: printf("%s", ((DTypeBool *) res)->val ? "True" : "False"); break;
+			case MATH_STRING_VALUE: printf("%s", ((DTypeStr *) res)->val.c_str()); break;
 			default: assert(0);
 			}
 			printf("\n");

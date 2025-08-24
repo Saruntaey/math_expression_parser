@@ -1,4 +1,6 @@
 #include "dtype.h"
+#include "math_exp_enum.h"
+#include <cstring>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -12,6 +14,7 @@ DType *DType::factory(math_exp_type id, const char *v, DType *(*get_val)(const c
 	case MATH_INTEGER_VALUE: return new DTypeInt(v);
 	case MATH_DOUBLE_VALUE: return new DTypeDouble(v);
 	case MATH_IDENTIFIER: return new DTypeVar(v, get_val);
+	case MATH_STRING_VALUE: return new DTypeStr(v);
 	default: assert(0);
 	}
 }
@@ -97,6 +100,44 @@ DType *DTypeBool::eval() {
 
 DType *DTypeBool::clone() {
 	return new DTypeBool(this->val);
+}
+
+DTypeStr::DTypeStr(const char* c) {
+	this->id = MATH_STRING_VALUE;
+	this->setValue((void *) c);
+}
+
+void DTypeStr::setValue(void *v) {
+	int n;
+	char *s;
+
+	s = (char *) v;
+	n = strlen(s);
+	if (n >= 2 && (s[0] == '\'' || s[0] == '"') && s[0] == s[n-1]) {
+		s = (char *) malloc(n-1);
+		strncpy(s, (char *)v + 1, n-2);
+		s[n-2] = '\0';
+		this->val = s;
+		free(s);
+	} else {
+		this->val = s;
+	}
+}
+
+void DTypeStr::setValue(DType *v) {
+	this->val = dynamic_cast<DTypeStr *>(v)->val;
+}
+
+math_exp_type DTypeStr::resultType() {
+	return MATH_STRING_VALUE;
+}
+
+DType *DTypeStr::eval() {
+	return clone();
+}
+
+DType *DTypeStr::clone() {
+	return new DTypeStr(this->val.c_str());
 }
 
 DTypeVar::DTypeVar(const char *name, DType *(*get_val)(const char *name)) {

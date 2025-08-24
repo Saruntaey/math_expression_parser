@@ -3,7 +3,7 @@
 #include <string>
 #include <stdbool.h>
 #include "math_exp_enum.h"
-#include "math_expr_tree.h"
+#include "dtype.h"
 
 class Operator: public MathExprNode {
 protected:

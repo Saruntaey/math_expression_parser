@@ -2,6 +2,7 @@
 #include <math.h>
 #include <assert.h>
 #include "dtype.h"
+#include "math_exp_enum.h"
 
 
 Operator::Operator(){
@@ -45,10 +46,12 @@ math_exp_type OperatorPlus::resultType(math_exp_type a, math_exp_type b) {
 	switch (comb(a, b)) {
 	case comb(MATH_INTEGER_VALUE, MATH_INTEGER_VALUE): return MATH_INTEGER_VALUE;
 	case comb(MATH_DOUBLE_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
+	case comb(MATH_STRING_VALUE, MATH_STRING_VALUE): return MATH_STRING_VALUE;
 	case comb(MATH_WILDCARD_VALUE, MATH_WILDCARD_VALUE): return MATH_WILDCARD_VALUE;
 	case comb(MATH_INTEGER_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
 	case comb(MATH_WILDCARD_VALUE, MATH_DOUBLE_VALUE): return MATH_DOUBLE_VALUE;
 	case comb(MATH_INTEGER_VALUE, MATH_WILDCARD_VALUE): return MATH_INTEGER_VALUE;
+	case comb(MATH_STRING_VALUE, MATH_WILDCARD_VALUE): return MATH_STRING_VALUE;
 	default: return MATH_INVALID;
 	}
 }
@@ -70,30 +73,39 @@ DType *OperatorPlus::eval() {
 	do {
 		if (!left || !right) break;
 		switch (left->id) {
-		case MATH_INTEGER_VALUE:
-			switch (right->id) {
 			case MATH_INTEGER_VALUE:
-					res = new DTypeInt();
-					((DTypeInt *) res)->val = ((DTypeInt *) left)->val + ((DTypeInt *) right)->val;
-					break;
+				switch (right->id) {
+					case MATH_INTEGER_VALUE:
+						res = new DTypeInt();
+						((DTypeInt *) res)->val = ((DTypeInt *) left)->val + ((DTypeInt *) right)->val;
+						break;
+					case MATH_DOUBLE_VALUE:
+						res = new DTypeDouble();
+						((DTypeDouble *) res)->val = (double) ((DTypeInt *) left)->val + ((DTypeDouble *) right)->val;
+						break;
+				}
+				break;
 			case MATH_DOUBLE_VALUE:
-					res = new DTypeDouble();
-					((DTypeDouble *) res)->val = (double) ((DTypeInt *) left)->val + ((DTypeDouble *) right)->val;
+				switch (right->id) {
+					case MATH_INTEGER_VALUE:
+						res = new DTypeDouble();
+						((DTypeDouble *) res)->val = ((DTypeDouble *) left)->val + (double) ((DTypeInt *) right)->val ;
+						break;
+					case MATH_DOUBLE_VALUE:
+						res = new DTypeDouble();
+						((DTypeDouble *) res)->val = ((DTypeDouble *) left)->val + ((DTypeDouble *) right)->val ;
+						break;
+				}
+				break;
+			case MATH_STRING_VALUE:
+				switch (right->id) {
+					case MATH_STRING_VALUE:
+						std::string v = ((DTypeStr *) left)->val;
+						v.append(((DTypeStr *) right)->val);
+						res = new DTypeStr(v.c_str());
 					break;
-			}
-			break;
-		case MATH_DOUBLE_VALUE:
-			switch (right->id) {
-			case MATH_INTEGER_VALUE:
-					res = new DTypeDouble();
-					((DTypeDouble *) res)->val = ((DTypeDouble *) left)->val + (double) ((DTypeInt *) right)->val ;
-					break;
-			case MATH_DOUBLE_VALUE:
-					res = new DTypeDouble();
-					((DTypeDouble *) res)->val = ((DTypeDouble *) left)->val + ((DTypeDouble *) right)->val ;
-					break;
-			}
-			break;
+				}
+				break;
 		}
 	} while(0);
 
