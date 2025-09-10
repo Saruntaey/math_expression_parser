@@ -12,7 +12,7 @@ The supported expresstion is shown as following table.
 | inequality (Q) | = != > >= < <=                | E                     | pow(2, 3) = 8                                              |
 | logical (S)    | and or                        | Q                     | (pow(2, 3) = 8 or 2 > 3) and sqrt(25) = 5                  |
 
-The following is demo of the calulator program which hard-coded variable a = int(2), b = double(1.5)
+The following is a demo of the calulator program in which hard-coded variable a = int(2), b = double(1.5)
 ![demo](./imgs/math_expr_demo.gif)
 
 ## How does it work
